@@ -2,8 +2,7 @@ from rgbmatrix import RGBMatrixOptions, graphics
 import collections
 import argparse
 import os
-import debug
-from datetime import datetime, timezone, time
+from datetime import datetime, timezone
 import regex
 import math
 import geocoder
