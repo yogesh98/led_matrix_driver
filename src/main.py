@@ -3,6 +3,7 @@ import time
 # from datetime import datetime, timedelta
 # from renderer.main import MainRenderer
 from samplebase import SampleBase
+from matrix import Matrix
 
 # from rgbmatrix import RGBMatrix, RGBMatrixOptions
 # from utils import args, led_matrix_options, stop_splash_service
