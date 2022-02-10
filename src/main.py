@@ -23,8 +23,8 @@ from samplebase import SampleBase
 # from update_checker import UpdateChecker
 # from apscheduler.schedulers.background import BackgroundScheduler
 # from renderer.loading_screen import Loading
-import debug
-import os
+# import debug
+# import os
 
 SCRIPT_NAME = "NHL-LED-SCOREBOARD"
 
