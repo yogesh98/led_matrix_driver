@@ -18,7 +18,7 @@ class RunText(SampleBase):
         textColor = graphics.Color(255, 255, 255)
         my_text = self.args.text
         response = requests.get("http://worldtimeapi.org/api/timezone/America/New_York")
-        print(response)
+        print(response.json)
         while True:
             offscreen_canvas.Clear()
             len = graphics.DrawText(offscreen_canvas, font, 20, 20, textColor, my_text)
