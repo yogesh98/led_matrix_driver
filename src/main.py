@@ -1,30 +1,36 @@
 #!/usr/bin/env python
+# Display a runtext with double-buffering.
 from samplebase import SampleBase
+from rgbmatrix import graphics
+import time
 
 
-class SimpleSquare(SampleBase):
+class RunText(SampleBase):
     def __init__(self, *args, **kwargs):
-        super(SimpleSquare, self).__init__(*args, **kwargs)
+        super(RunText, self).__init__(*args, **kwargs)
+        self.parser.add_argument("-t", "--text", help="The text to scroll on the RGB LED panel", default="Hello world!")
 
     def run(self):
-        offset_canvas = self.matrix.CreateFrameCanvas()
+        offscreen_canvas = self.matrix.CreateFrameCanvas()
+        font = graphics.Font()
+        font.LoadFont("../../../fonts/7x13.bdf")
+        textColor = graphics.Color(255, 255, 0)
+        pos = offscreen_canvas.width
+        my_text = self.args.text
+
         while True:
-            for x in range(0, self.matrix.width):
-                offset_canvas.SetPixel(x, x, 255, 255, 255)
-                offset_canvas.SetPixel(offset_canvas.height - 1 - x, x, 255, 0, 255)
+            offscreen_canvas.Clear()
+            len = graphics.DrawText(offscreen_canvas, font, pos, 10, textColor, my_text)
+            pos -= 1
+            if (pos + len < 0):
+                pos = offscreen_canvas.width
 
-            for x in range(0, offset_canvas.width):
-                offset_canvas.SetPixel(x, 0, 255, 0, 0)
-                offset_canvas.SetPixel(x, offset_canvas.height - 1, 255, 255, 0)
-
-            for y in range(0, offset_canvas.height):
-                offset_canvas.SetPixel(0, y, 0, 0, 255)
-                offset_canvas.SetPixel(offset_canvas.width - 1, y, 0, 255, 0)
-            offset_canvas = self.matrix.SwapOnVSync(offset_canvas)
+            time.sleep(0.05)
+            offscreen_canvas = self.matrix.SwapOnVSync(offscreen_canvas)
 
 
 # Main function
 if __name__ == "__main__":
-    simple_square = SimpleSquare()
-    if (not simple_square.process()):
-        simple_square.print_help()
+    run_text = RunText()
+    if (not run_text.process()):
+        run_text.print_help()
