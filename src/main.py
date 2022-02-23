@@ -1,149 +1,30 @@
-import sys
-import time
-# from datetime import datetime, timedelta
-# from renderer.main import MainRenderer
+#!/usr/bin/env python
 from samplebase import SampleBase
-from matrix import Matrix
-
-# from rgbmatrix import RGBMatrix, RGBMatrixOptions
-# from utils import args, led_matrix_options, stop_splash_service
-# from data.data import Data
-# import threading
-# from sbio.dimmer import Dimmer
-# from sbio.pushbutton import PushButton
-# from sbio.motionsensor import Motion
-# from sbio.screensaver import screenSaver
-# from renderer.matrix import Matrix, TermMatrix
-# from api.weather.ecWeather import ecWxWorker
-# from api.weather.owmWeather import owmWxWorker
-# from api.weather.ecAlerts import ecWxAlerts
-# from api.weather.nwsAlerts import nwsWxAlerts
-# from api.weather.wxForecast import wxForecast
-# from env_canada import ECData
-# from renderer.matrix import Matrix
-# from update_checker import UpdateChecker
-# from apscheduler.schedulers.background import BackgroundScheduler
-# from renderer.loading_screen import Loading
-# import debug
-# import os
-
-SCRIPT_NAME = "NHL-LED-SCOREBOARD"
-
-SCRIPT_VERSION = "1.6.9"
 
 
-def run():
-    samplebase = SampleBase()
-    # Initialize the matrix
-    matrix = Matrix(samplebase.matrix)
-    self.matrix.draw_text(["50%", "50%"], "REBOOT",font="4x6.bdf",
-        fill=(0, 255, 0),
-        align="center-center")
+class SimpleSquare(SampleBase):
+    def __init__(self, *args, **kwargs):
+        super(SimpleSquare, self).__init__(*args, **kwargs)
 
-    #  #Riff to add loading screen here
-    # loading = Loading(matrix)
-    # loading.render()
+    def run(self):
+        offset_canvas = self.matrix.CreateFrameCanvas()
+        while True:
+            for x in range(0, self.matrix.width):
+                offset_canvas.SetPixel(x, x, 255, 255, 255)
+                offset_canvas.SetPixel(offset_canvas.height - 1 - x, x, 255, 0, 255)
 
-    # # Read scoreboard options from config.json if it exists
-    # config = ScoreboardConfig("config", commandArgs, (matrix.width, matrix.height))
+            for x in range(0, offset_canvas.width):
+                offset_canvas.SetPixel(x, 0, 255, 0, 0)
+                offset_canvas.SetPixel(x, offset_canvas.height - 1, 255, 255, 0)
 
-    # data = Data(config)
-
-    # #If we pass the logging arguments on command line, override what's in the config.json, else use what's in config.json (color will always be false in config.json)
-    # if commandArgs.logcolor and commandArgs.loglevel != None:
-    #     debug.set_debug_status(config,logcolor=commandArgs.logcolor,loglevel=commandArgs.loglevel)
-    # elif not commandArgs.logcolor and commandArgs.loglevel != None:
-    #     debug.set_debug_status(config,loglevel=commandArgs.loglevel)
-    # elif commandArgs.logcolor and commandArgs.loglevel == None:
-    #     debug.set_debug_status(config,logcolor=commandArgs.logcolor,loglevel=config.loglevel)
-    # else:
-    #     debug.set_debug_status(config,loglevel=config.loglevel)
-
-    # # Print some basic info on startup
-    # debug.info("{} - v{} ({}x{})".format(SCRIPT_NAME, SCRIPT_VERSION, matrix.width, matrix.height))
-    
-    # if data.latlng is not None:
-    #     debug.info(data.latlng_msg)
-    # else:
-    #     debug.error("Unable to find your location.")
-
-    # # Event used to sleep when rendering
-    # # Allows Web API (coming in V2) and pushbutton to cancel the sleep
-    # # Will also allow for weather alert to interrupt display board if you want
-    # sleepEvent = threading.Event()
+            for y in range(0, offset_canvas.height):
+                offset_canvas.SetPixel(0, y, 0, 0, 255)
+                offset_canvas.SetPixel(offset_canvas.width - 1, y, 0, 255, 0)
+            offset_canvas = self.matrix.SwapOnVSync(offset_canvas)
 
 
-    # # Start task scheduler, used for UpdateChecker and screensaver, forecast, dimmer and weather
-    # scheduler = BackgroundScheduler()
-    # scheduler.start()
-
-    # # Any tasks that are scheduled go below this line
-
-    # # Make sure we have a valid location for the data.latlng as the geocode can return a None
-    # # If there is no valid location, skip the weather boards
-    
-    # #Create EC data feed handler
-    # if data.config.weather_enabled or data.config.wxalert_show_alerts:
-    #     if data.config.weather_data_feed.lower() == "ec" or data.config.wxalert_alert_feed.lower() == "ec":
-    #         try:
-    #             data.ecData = ECData(coordinates=(data.latlng))
-    #         except Exception as e:
-    #             debug.error("Unable to connect to EC, try running again in a few minutes")
-    #             sys.exit(0)
-
-    # if data.config.weather_enabled:
-    #     if data.config.weather_data_feed.lower() == "ec":
-    #         ecWxWorker(data,scheduler)
-    #     elif data.config.weather_data_feed.lower() == "owm":
-    #         owmweather = owmWxWorker(data,scheduler)
-    #     else:
-    #         debug.error("No valid weather providers selected, skipping weather feed")
-    #         data.config.weather_enabled = False
-
-
-    # if data.config.wxalert_show_alerts:
-    #     if data.config.wxalert_alert_feed.lower() == "ec":
-    #         ecalert = ecWxAlerts(data,scheduler,sleepEvent)
-    #     elif data.config.wxalert_alert_feed.lower() == "nws":
-    #         nwsalert = nwsWxAlerts(data,scheduler,sleepEvent)
-    #     else:
-    #         debug.error("No valid weather alerts providers selected, skipping alerts feed")
-    #         data.config.weather_show_alerts = False
-
-    # if data.config.weather_forecast_enabled and data.config.weather_enabled:
-    #     wxForecast(data,scheduler)
-    # #
-    # # Run check for updates against github on a background thread on a scheduler
-    # #
-    # if commandArgs.updatecheck:
-    #     data.UpdateRepo = commandArgs.updaterepo
-    #     checkupdate = UpdateChecker(data,scheduler,commandArgs.ghtoken)
-
-    # if data.config.dimmer_enabled:
-    #     dimmer = Dimmer(data, matrix,scheduler)
-
-    # screensaver = None
-    # if data.config.screensaver_enabled:
-    #     screensaver = screenSaver(data, matrix, sleepEvent, scheduler)
-    #     if data.config.screensaver_motionsensor:
-    #         motionsensor = Motion(data,matrix,sleepEvent,scheduler,screensaver)
-    #         motionsensorThread = threading.Thread(target=motionsensor.run, args=())
-    #         motionsensorThread.daemon = True
-    #         motionsensorThread.start()
-
-    # if data.config.pushbutton_enabled:
-    #     pushbutton = PushButton(data,matrix,sleepEvent)
-    #     pushbuttonThread = threading.Thread(target=pushbutton.run, args=())
-    #     pushbuttonThread.daemon = True
-    #     pushbuttonThread.start()
-    
-    # MainRenderer(matrix, data, sleepEvent).render()
-
-
+# Main function
 if __name__ == "__main__":
-    try:
-        run()
-
-    except KeyboardInterrupt:
-        print("Exiting NHL-LED-SCOREBOARD\n")
-        sys.exit(0)
+    simple_square = SimpleSquare()
+    if (not simple_square.process()):
+        simple_square.print_help()
