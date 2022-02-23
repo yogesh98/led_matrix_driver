@@ -3,6 +3,7 @@
 from samplebase import SampleBase
 from rgbmatrix import graphics
 import time
+import requests
 
 
 class RunText(SampleBase):
@@ -14,16 +15,13 @@ class RunText(SampleBase):
         offscreen_canvas = self.matrix.CreateFrameCanvas()
         font = graphics.Font()
         font.LoadFont("../assets/fonts/7x13.bdf")
-        textColor = graphics.Color(255, 255, 0)
-        pos = offscreen_canvas.width
+        textColor = graphics.Color(255, 255, 255)
         my_text = self.args.text
-
+        response = requests.get("http://worldtimeapi.org/api/timezone/America/New_York")
+        print(response)
         while True:
             offscreen_canvas.Clear()
-            len = graphics.DrawText(offscreen_canvas, font, pos, 10, textColor, my_text)
-            pos -= 1
-            if (pos + len < 0):
-                pos = offscreen_canvas.width
+            len = graphics.DrawText(offscreen_canvas, font, 20, 20, textColor, my_text)
 
             time.sleep(0.05)
             offscreen_canvas = self.matrix.SwapOnVSync(offscreen_canvas)
