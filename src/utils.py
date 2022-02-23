@@ -1,14 +1,14 @@
-from rgbmatrix import RGBMatrixOptions, graphics
+# from rgbmatrix import RGBMatrixOptions, graphics
 import collections
 import argparse
 import os
 from datetime import datetime, timezone
-import regex
+# import regex
 import math
-import geocoder
-import dbus
+# import geocoder
+# import dbus
 import json
-from iso6709 import Location
+# from iso6709 import Location
 
 uid = int(os.stat("./VERSION").st_uid)
 gid = int(os.stat("./VERSION").st_uid)
